@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const links = ["Services", "Work", "Pricing", "Contact"];
+const links = ["Services", "Work", "Team", "Process", "Contact"];
 
-export default function Navbar() {
+export default function Navbar({ theme, toggleTheme }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -18,66 +18,48 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className={`fixed w-full z-50 px-6 py-4 flex justify-between items-center transition-all duration-300 ${
-        scrolled ? "bg-black/80 backdrop-blur-md shadow-lg" : "bg-transparent"
+      className={`fixed w-full z-50 px-6 md:px-14 py-4 flex justify-between items-center transition-all duration-300 ${
+        scrolled ? "glass shadow-sm" : "bg-transparent"
       }`}
     >
-      <h1 className="text-2xl font-black tracking-tight">
-        <span className="text-purple-500">Nex</span>ora
-      </h1>
+      <img src="/teixon-logo.svg" alt="Teixon Technology" className={`h-9 ${theme === "dark" ? "brightness-0 invert" : ""}`} />
 
-      {/* Desktop links */}
-      <ul className="hidden md:flex gap-8 text-sm text-gray-300">
+      <ul className="hidden md:flex gap-8 text-sm font-semibold" style={{ color: "var(--text2)" }}>
         {links.map((l) => (
           <li key={l}>
-            <a
-              href={`#${l.toLowerCase()}`}
-              className="hover:text-purple-400 transition-colors"
-            >
-              {l}
-            </a>
+            <a href={`#${l.toLowerCase()}`} className="hover:text-indigo-500 transition-colors">{l}</a>
           </li>
         ))}
       </ul>
 
-      <a
-        href="#contact"
-        className="hidden md:block bg-purple-600 hover:bg-purple-700 px-5 py-2 rounded-lg text-sm font-semibold transition-colors"
-      >
-        Get Quote
-      </a>
+      <div className="hidden md:flex items-center gap-3">
+        {/* Dark/Light toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
+          style={{ background: "var(--bg3)", border: "1px solid var(--border)" }}
+          title="Toggle theme"
+        >
+          {theme === "dark" ? "☀️" : "🌙"}
+        </button>
+        <a href="#contact" className="neon-btn">Get a Quote</a>
+      </div>
 
-      {/* Mobile hamburger */}
-      <button
-        className="md:hidden text-white"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
+      <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
         <div className="space-y-1.5">
-          <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
-          <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpen ? "opacity-0" : ""}`} />
-          <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          {[0,1,2].map(i => (
+            <span key={i} className={`block w-6 h-0.5 transition-all`} style={{ background: "var(--text)" }} />
+          ))}
         </div>
       </button>
 
       {menuOpen && (
-        <div className="absolute top-full left-0 w-full bg-black/95 flex flex-col items-center gap-6 py-8 md:hidden">
+        <div className="absolute top-full left-0 w-full glass flex flex-col items-center gap-6 py-8 md:hidden">
           {links.map((l) => (
-            <a
-              key={l}
-              href={`#${l.toLowerCase()}`}
-              className="text-gray-300 hover:text-purple-400 text-lg"
-              onClick={() => setMenuOpen(false)}
-            >
-              {l}
-            </a>
+            <a key={l} href={`#${l.toLowerCase()}`} className="font-semibold hover:text-indigo-500" style={{ color: "var(--text)" }} onClick={() => setMenuOpen(false)}>{l}</a>
           ))}
-          <a
-            href="#contact"
-            className="bg-purple-600 px-6 py-2 rounded-lg font-semibold"
-            onClick={() => setMenuOpen(false)}
-          >
-            Get Quote
-          </a>
+          <button onClick={toggleTheme} className="text-2xl">{theme === "dark" ? "☀️" : "🌙"}</button>
+          <a href="#contact" className="neon-btn" onClick={() => setMenuOpen(false)}>Get a Quote</a>
         </div>
       )}
     </motion.nav>

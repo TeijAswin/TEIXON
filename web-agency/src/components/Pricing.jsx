@@ -1,4 +1,9 @@
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const plans = [
   {
@@ -45,8 +50,24 @@ const plans = [
 ];
 
 export default function Pricing() {
+  const sectionRef = useRef();
+
+  useEffect(() => {
+    const cards = sectionRef.current.querySelectorAll(".pricing-card");
+    gsap.from(cards, {
+      y: 80,
+      opacity: 0,
+      stagger: 0.2,
+      duration: 0.8,
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 70%",
+      },
+    });
+  }, []);
+
   return (
-    <section id="pricing" className="py-24 px-8 bg-gradient-to-b from-purple-950/20 to-black">
+    <section ref={sectionRef} id="pricing" className="py-24 px-8 bg-gradient-to-b from-purple-950/20 to-black">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -65,11 +86,7 @@ export default function Pricing() {
           {plans.map((p, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className={`rounded-2xl p-8 flex flex-col ${
+              className={`pricing-card rounded-2xl p-8 flex flex-col ${
                 p.highlight
                   ? "bg-purple-600 shadow-2xl shadow-purple-500/30 scale-105"
                   : "glass"
